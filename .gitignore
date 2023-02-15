@@ -3,5 +3,5 @@ __pycache__
 
 .env
 client_secrets.json
-credentials.json
+user_credentials.json
 settings.yaml

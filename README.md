@@ -2,7 +2,8 @@
 
 ## INTRO
 
-The script's purpose is to upload the contents of specified dir to an appropriate folder.
+The script's purpose is to upload the contents of specified dir to directory 
+on Google Drive.
 
 ## SETUP
 
@@ -71,11 +72,11 @@ client_secret. You can take it from `client_secrets.json`.
 client_config_backend: file
 client_config:
     client_id: "<client_id>"
-    client_secret: "<client_secret"
+    client_secret: "<client_secret>"
 
 save_credentials: True
 save_credentials_backend: file
-save_credentials_file: credentials.json
+save_credentials_file: user_credentials.json
 
 get_refresh_token: True
 

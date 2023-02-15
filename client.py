@@ -1,8 +1,10 @@
 import os
 from typing import Optional
+from concurrent.futures import ThreadPoolExecutor
 
 from pydrive.auth import GoogleAuth
 from pydrive.drive import GoogleDrive
+from pydrive.files import ApiRequestError
 
 
 class UploadClient:
@@ -38,14 +40,20 @@ class UploadClient:
         gdrive_dir.Upload()
         return gdrive_dir
 
-    def upload(self):
-        dest_id = self.dest_id or self._get_dest_id()
-        files = os.listdir(self.source_path)
-        for file in files:
-            file_path = os.path.join(self.source_path, file)
+    def _upload_file(self, file):
+        file_path = os.path.join(self.source_path, file)
+        try:
             f = self.drive.CreateFile({
-                    'title': file,
-                    "parents": [{"id": dest_id}]
-                })
+                'title': file,
+                "parents": [{"id": self.dest_id}]
+            })
             f.SetContentFile(file_path)
             f.Upload()
+        except ApiRequestError as exc:
+            print(f'Failed to upload {file}. Error message: {exc}')
+
+    def upload(self):
+        self.dest_id = self.dest_id or self._get_dest_id()
+        files = os.listdir(self.source_path)
+        with ThreadPoolExecutor() as pool:
+            pool.map(self._upload_file, files)
