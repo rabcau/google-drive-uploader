@@ -1,6 +1,7 @@
 .idea
 __pycache__
 
+.env
 client_secrets.json
 credentials.json
 settings.yaml
