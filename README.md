@@ -8,11 +8,23 @@ The script's purpose is to upload the contents of specified dir to an appropriat
 
 ### Google Cloud Project
 
+#### Create a project
+
 To interact with Google Drive programmatically you should have a Google Cloud project.
 Visit [create a project](https://console.cloud.google.com/projectcreate) in Google Cloud
 Console, specify the project name, and push **Create** button.
 
 ![pic1](docs/001-create-google-cloud-project.png)
+
+#### Enable Google Drive API
+
+After the project creation you should activate Google Drive API for you project. Visit
+[api's library](https://console.cloud.google.com/apis/library) page, click on Google
+Drive API and **ENABLE** the API.
+
+![pic10](docs/010-drive-api.png)
+
+#### Create access credentials
 
 Visit you project [credentials](https://console.cloud.google.com/apis/credentials) page
 to create access credentials. First you should configure **Consent Screen**.
@@ -47,4 +59,31 @@ and push the **CREATE** button:
 
 After client creation you will see the **OAuth client created** window. Click on
 **DOWNLOAD JSON** button to save the credentials as a json file. Specify the name
-as **client_secrets.json** and save the file in the project root.
+as `client_secrets.json` and save the file in the project root.
+
+#### Avoiding the browser auth
+
+To avoid the authentication process at each script run create the `setting.yaml` file,
+copy the content of code snippet below, and specify your project client_id and
+client_secret. You can take it from `client_secrets.json`.
+
+```yaml
+client_config_backend: file
+client_config:
+    client_id: "<client_id>"
+    client_secret: "<client_secret"
+
+save_credentials: True
+save_credentials_backend: file
+save_credentials_file: credentials.json
+
+get_refresh_token: True
+
+oauth_scope:
+    - https://www.googleapis.com/auth/drive
+    - https://www.googleapis.com/auth/drive.install
+```
+
+Then run the script. You will have to authenticate via browser one time.
+After authentication the `credentials.json` will be saved in the project
+root.
