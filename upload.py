@@ -23,10 +23,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    source = get_dir(args.source)
-    dest = args.dest or source
+    source = args.source
+    dest = args.dest or get_dir(source)
     dest_id = os.getenv("DEST_ID", args.dest_id)
 
-    if source:
-        client = UploadClient(source, dest, dest_id)
-        client.upload()
+    client = UploadClient(source, dest, dest_id)
+    client.upload()
