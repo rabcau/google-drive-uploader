@@ -2,16 +2,39 @@
 
 ## INTRO
 
-The script's purpose is to upload the contents of specified dir to directory 
+The script's purpose is to upload the contents of specified dir to the directory 
 on Google Drive.
 
 ## SETUP
 
+### Local environment setup
+
+- Ensure you have python3.9+ installed
+- Clone the repo and navigate to the project dir:
+```shell
+$ git clone git@github.com:rabcau/google-drive-uploader
+$ cd google-drive-uploader
+```
+- Create a virtual env in any convenient way, and activate it. For example:
+```shell
+$ python3 -m venv venv
+$ source venv/bin/activate
+```
+- Install the project dependencies
+```shell
+$ pip install -r requirements.txt
+```
+
 ### Google Cloud Project
+
+To interact with Google Drive programmatically you should own a Google Cloud project
+or have access to a project with appropriate permissions. Follow the steps below
+to create and set up your own Google Cloud project. If you're permitted to use
+some project with Google Drive API enabled feel free to jump to [this](#avoiding-the-browser-auth)
+section.
 
 #### Create a project
 
-To interact with Google Drive programmatically you should have a Google Cloud project.
 Visit [create a project](https://console.cloud.google.com/projectcreate) in Google Cloud
 Console, specify the project name, and push **Create** button.
 
@@ -65,8 +88,8 @@ as `client_secrets.json` and save the file in the project root.
 #### Avoiding the browser auth
 
 To avoid the authentication process at each script run create the `setting.yaml` file,
-copy the content of code snippet below, and specify your project client_id and
-client_secret. You can take it from `client_secrets.json`.
+copy the content of code snippet below, and specify your project `client_id` and
+`client_secret`. You can take it from `client_secrets.json`.
 
 ```yaml
 client_config_backend: file
@@ -85,6 +108,34 @@ oauth_scope:
     - https://www.googleapis.com/auth/drive.install
 ```
 
-Then run the script. You will have to authenticate via browser one time.
-After authentication the `credentials.json` will be saved in the project
-root.
+## USAGE
+
+### Arguments:
+
+- `source` - a path to the dir you want to upload to Google Drive. Mandatory.
+```shell
+$ ./upload.py docs/
+```
+- `--dest` - a name of the destination dir on Google Drive. Optional. If not
+specified the contents of source dir will be pushed to the directory with the
+same name. A destination dir will be created if it doesn't exist. If there are
+multiple folders with the same name on Google Drive the contents of `source` will
+be pushed to the "oldest" dest dir.
+```shell
+$ ./upload.py docs/ --dest dest-dir 
+```
+- `dest_id` - an identifier of destination dir on Google Drive. Optional. If not
+specified the whole Google Drive will be scanned. If both `--dest` and `--dest_id`
+are specified the `--dest` will be ignored.
+```shell
+$ ./upload.py docs/ --dest_id 1zHh-JKYTbMH_SwCMF3B9gFR9tspAW3yt
+```
+
+### Tips
+
+- You will have to authenticate via browser once. After this one-time action the
+credentials will be saved in the project root as a `user_credentials.json`
+
+- If you want to constantly push the contents of source dir to a single folder on Google
+Drive you can create an `.env` file, specify the `DEST_ID` envvar, and just run
+`./upload.py /path/to/source/`. 
