@@ -30,4 +30,8 @@ if __name__ == "__main__":
     dest_id = os.getenv("DEST_ID", args.dest_id)
 
     client = UploadClient(source, dest, dest_id, args.r)
-    client.upload_dir()
+
+    try:
+        client.upload_dir()
+    except Exception as exc:
+        print(f"The script has failed to finish. The reason - {exc}")
