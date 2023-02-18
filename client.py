@@ -7,6 +7,11 @@ from pydrive.drive import GoogleDrive
 from pydrive.files import ApiRequestError, GoogleDriveFile
 
 
+# Client
+# dest match security check
+# service mode
+
+
 class UploadClient:
     def __init__(
         self,
@@ -54,13 +59,12 @@ class UploadClient:
             )
             f.SetContentFile(file_path)
             f.Upload()
+            if self.remove:
+                os.remove(file_path)
         except ApiRequestError as exc:
             print(f"Failed to upload {file}. The reason - {exc}")
-        if self.remove:
-            try:
-                os.remove(file_path)
-            except Exception as exc:
-                print(f"Failed to remove {file}. The reason - {exc}")
+        except Exception as exc:
+            print(f"{file} is failed to upload with unexpected error - {exc}")
 
     def upload_dir(self):
         self.dest_id = self.dest_id or self._get_dest_id()
