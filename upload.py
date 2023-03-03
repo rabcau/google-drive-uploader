@@ -26,12 +26,15 @@ class Mode:
     service = "service"
 
 
+class UnstableFeature(Exception):
+    pass
+
+
 if __name__ == "__main__":
     load_dotenv()
     parser = argparse.ArgumentParser()
 
     parser.add_argument("mode", choices=("manual", "queue", "service"))
-    parser.add_argument("source", help="Path to source dir")
     parser.add_argument("--dest", help="Google Drive dir name")
     parser.add_argument("--dest_id", help="The id of destination dir on Google Drive")
     parser.add_argument(
@@ -43,7 +46,7 @@ if __name__ == "__main__":
     mode = args.mode
     source = args.source
     dest = args.dest or get_dir(source)
-    dest_id = os.getenv("DEST_ID", args.dest_id)
+    dest_id = args.dest_id or os.getenv("DEST_ID")
 
     client = UploadClient(source, dest, dest_id, args.r)
 
@@ -52,6 +55,7 @@ if __name__ == "__main__":
         if mode == Mode.manual:
             client.upload_dir()
         elif mode == Mode.queue:
+            raise UnstableFeature("The queue mode is unstable")
             queue = queue_.UniqueQueue()
             with ThreadPoolExecutor() as executor:
                 threading.Thread(
@@ -62,4 +66,5 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print(f"[{time.asctime()}] The script has been stopped manually.")
     except Exception as exc:
-        print(f"[{time.asctime()}] The script has failed to finish. The reason - {exc}")
+        print(f"[{time.asctime()}] The script has failed to finish. "
+              f"The reason - {exc.__class__.__name__}: {exc}")

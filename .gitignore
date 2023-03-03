@@ -1,5 +1,7 @@
 .idea
 __pycache__
+ids
+test
 
 .env
 client_secrets.json
